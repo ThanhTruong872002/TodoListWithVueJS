@@ -11,7 +11,7 @@
         <FilterTodo @categoryInput="filterTodos" />
       </div>
       <ListTodo
-        :todos="todos"
+        :todos="filteredTodos"
         @todoRemove="removeTodo"
         @todoSuccess="successTodo"
       />
