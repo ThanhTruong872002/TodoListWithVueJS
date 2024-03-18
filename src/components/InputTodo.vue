@@ -1,27 +1,12 @@
-<script setup>
-import { ref, computed } from "vue";
-
-const input_content = ref("");
-const emit = defineEmits(["inputTodoSubmitted"]);
-
-const onSubmit = () => {
-  if (input_content.value.trim() === "") {
-    return;
-  }
-  const todoData = input_content.value;
-
-  emit("inputTodoSubmitted", todoData);
-  input_content.value = "";
-};
-</script>
 <template>
-  <form @submit.prevent="onSubmit" class="my-20 flex gap-12">
+  <form @submit.prevent="handleSubmit" class="my-20 flex gap-12">
     <div class="flex relative">
       <input
         v-model="input_content"
         type="text"
         name="content"
-        class="text-[16px] bg-white p-[10px] w-[405px] h-[53px] outline-none rounded-md"
+        placeholder="I need to..."
+        class="text-[16px] bg-white p-[10px] w-[300px] lg:w-[405px] h-[53px] outline-none rounded-md"
       />
       <div
         class="absolute right-0 hover:bg-[#ff6f47] h-[53px] w-[45px] flex justify-center items-center cursor-pointer"
@@ -38,3 +23,35 @@ const onSubmit = () => {
     </div>
   </form>
 </template>
+
+<script>
+import { ref } from "vue";
+import { useTodoStore } from "../stores/TodoStores.js";
+import { useToast } from "vue-toastification";
+import { v4 as uuidv4 } from "uuid";
+
+export default {
+  setup() {
+    const todoStore = useTodoStore();
+
+    const toast = useToast();
+
+    const input_content = ref("");
+
+    const handleSubmit = () => {
+      if (input_content.value.length > 0) {
+        todoStore.addTodo({
+          id: uuidv4(),
+          content: input_content.value,
+          category: "Uncompleted",
+        });
+        input_content.value = "";
+      } else {
+        toast.error("Todo is required");
+      }
+    };
+
+    return { handleSubmit, input_content };
+  },
+};
+</script>

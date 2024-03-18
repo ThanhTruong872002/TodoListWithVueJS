@@ -8,23 +8,30 @@
   />
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
+<script>
+import { ref, computed, defineProps } from "vue";
 import Dropdown from "primevue/dropdown";
+import { useTodoStore } from "../stores/TodoStores.js";
+export default {
+  components: {
+    Dropdown,
+  },
+  setup() {
+    const todoStore = useTodoStore();
 
-const emit = defineEmits(["categoryInput"]);
+    const input_category = ref({ name: "All" });
 
-const input_category = ref({ name: "All" });
+    const selectOptions = ref([
+      { name: "All" },
+      { name: "Completed" },
+      { name: "Uncompleted" },
+    ]);
 
-const selectOptions = ref([
-  { name: "All" },
-  { name: "Completed" },
-  { name: "Uncompleted" },
-]);
+    const filterTodos = () => {
+      todoStore.filterTodos(input_category.value.name);
+    };
 
-const filterTodos = () => {
-  const categoryData = input_category.value.name;
-
-  emit("categoryInput", categoryData);
+    return { input_category, selectOptions, filterTodos };
+  },
 };
 </script>
